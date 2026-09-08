@@ -24,8 +24,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ================= ตั้งค่า API Key ของแท้ =================
-BACKEND_GEMINI_API_KEY = "AIzaSyBdIj0mzt7MxJhwMm8bMvTVvzWx9_28DVI"
+# ================= ดึง API Key จาก Secrets =================
+try:
+    BACKEND_GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    BACKEND_GEMINI_API_KEY = ""
 
 def display_row(label, value):
     st.markdown(f"<div class='row-item'><span class='row-label'>{label}</span><span class='row-value'>{value}</span></div>", unsafe_allow_html=True)
@@ -404,7 +407,7 @@ def get_standardized_yahoo_quarterly_table(ticker):
     except Exception as e:
         return pd.DataFrame(), f"⚠️ เกิดข้อผิดพลาด Yahoo Finance Quarterly: {e}"
 
-# ================= ฟังก์ชันแปลและสรุปข่าวผ่าน Gemini (ใช้ SDK google-genai) =================
+# ================= ฟังก์ชันแปลและสรุปข่าวผ่าน Gemini =================
 @st.cache_data(ttl=1800, show_spinner=False)
 def fetch_and_translate_news(ticker, api_key):
     try:
